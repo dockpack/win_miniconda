@@ -1,0 +1,6 @@
+---
+
+install_miniconda: true
+
+conda_templates:
+  - py37_64.yml

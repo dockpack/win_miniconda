@@ -1,6 +1,22 @@
 ---
 
-- name: Install miniconda3
-  win_chocolatey:
-    name: miniconda3
-    state: present
+- name: install when install_miniconda is true
+  include_tasks: install.yml
+  when: install_miniconda is defined and install_miniconda|bool
+
+- name: Create conda environment py37_64
+  win_shell: "cmd.exe {{ conda_dir }}/Scripts/activate.bat {{ conda_dir }}/conda create -y --name py37_64 python==3.7"
+
+- name: Copy conda environment templates
+  win_template:
+    dest: 'C:/tmp/'
+    src: "{{ item }}"
+  with_items:
+    - "{{ conda_templates }}"
+
+- name: Configure conda environments
+  win_shell: "cmd.exe {{ conda_dir }}/Scripts/activate.bat {{ conda_dir }}/conda install -f -y -q --name py37_64 -c conda-forge --file {{ item }}"
+  with_items:
+    - "{{ conda_templates }}"
+
+#- name: Cleanup conda

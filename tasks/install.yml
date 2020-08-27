@@ -1,0 +1,6 @@
+---
+
+- name: Install miniconda3
+  win_chocolatey:
+    name: miniconda3
+    state: present

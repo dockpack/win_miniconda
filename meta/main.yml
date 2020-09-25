@@ -2,7 +2,6 @@
 dependencies: []
 
 galaxy_info:
-  role_name: dockpack.win_miniconda
   author: bbaassssiiee
   description: |
     Miniconda is the minimal version of Anaconda, a cross-platform

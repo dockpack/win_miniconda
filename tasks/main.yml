@@ -4,9 +4,6 @@
   include_tasks: install.yml
   when: install_miniconda is defined and install_miniconda|bool
 
-- name: Create conda environment py37_64
-  win_shell: "cmd.exe {{ conda_dir }}/Scripts/activate.bat {{ conda_dir }}/conda create -y --name py37_64 python==3.7"
-
 - name: Copy conda environment templates
   win_template:
     dest: 'C:/tmp/'
@@ -15,8 +12,19 @@
     - "{{ conda_templates }}"
 
 - name: Configure conda environments
-  win_shell: "cmd.exe {{ conda_dir }}/Scripts/activate.bat {{ conda_dir }}/conda install -f -y -q --name py37_64 -c conda-forge --file {{ item }}"
+  win_shell: |
+    cmd.exe {{ conda_dir }}/Scripts/activate.bat {{ conda_dir }}
+    {{ conda_dir }}/condabin/conda env create -f C:/tmp/{{ item }}
+  register: venv
+  failed_when: venv.rc|int > 1
   with_items:
     - "{{ conda_templates }}"
+  tags:
+    - venv
 
-# - name: Cleanup conda
+- name: Cleanup conda
+  win_shell: |
+    cmd.exe {{ conda_dir }}/Scripts/activate.bat {{ conda_dir }}
+    {{ conda_dir }}/condabin/conda clean --all
+  tags:
+    - cleanup
